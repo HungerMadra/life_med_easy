@@ -4,7 +4,8 @@ A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This project is an app that tracks your health habits and provide improvement insights, analysis and logs.
+Added: Feature (Accountability Buddy - To make sure you stay with it)
 
 A few resources to get you started if this is your first Flutter project:
 
