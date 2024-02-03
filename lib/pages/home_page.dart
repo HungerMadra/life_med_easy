@@ -15,8 +15,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   // Selected Index To Control The Bottom Nav Bar
-  int _selectedIndex = 1;
-
+  int _selectedIndex = 0;
+  
   void navigateBottomNavBar(int index) {
     setState(() {
       _selectedIndex = index;
@@ -55,13 +55,13 @@ class _HomePageState extends State<HomePage> {
       ],
     ),
 
-    const HomePage(),
     const Logs(),
     const Insights(),
   ];
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.grey[300],
 
