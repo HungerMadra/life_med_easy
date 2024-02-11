@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:life_med_easy/components/text_field.dart'; // Import custom text field widget
 import '../models/cards.dart'; // Import the Cards model
 
-class ReadingsTile extends StatelessWidget {
+
+class ReadingsTile extends StatefulWidget {
+  
   final Cards reading; // Instance of the Cards model representing the reading
 
   // Constructor for ReadingsTile
@@ -12,9 +16,88 @@ class ReadingsTile extends StatelessWidget {
     required this.reading,
   }) : super(key: key);
 
+  @override
+  State<ReadingsTile> createState() => _ReadingsTileState();
+}
+
+class _ReadingsTileState extends State<ReadingsTile> {
+
+  //Create a database instance
+  late Database _database;
+
+      // Initialize the database
+  void _initializeDatabase() async {
+    _database = await openDatabase(
+      // Set the path and name of the database file
+      join(await getDatabasesPath(), 'pressure_log_database.db'),
+
+      onCreate: (db, version) {
+        // Create the pressure_log table
+        return db.execute(
+          'CREATE TABLE pressure_log(id INTEGER PRIMARY KEY, syst INTEGER, dias INTEGER)',
+        );
+      },
+
+      version: 1,
+    );
+  }
+
+  //To initialize the database when the app starts
+
+    @override
+  void initState() {
+    super.initState();
+    _initializeDatabase();
+  }
+
+Future<void> _savePressureLog(BuildContext context, int syst, int dias) async {
+  await _database.insert(
+    'pressure_log',
+    {'syst': syst, 'dias': dias},
+    conflictAlgorithm: ConflictAlgorithm.replace,
+  );
+
+  // Show popup dialog
+  // ignore: use_build_context_synchronously
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Blood Pressure Saved'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
+
+  // Clear text fields
+  for (var controller in widget.reading.textFieldControllers) {
+    controller.clear();
+  }
+
+  // Print current pressure log to debug console
+  print(await _getPressureLog());
+}
+
+
+
+
+      // Function to handle reading pressure log from the database
+  Future<List<Map<String, dynamic>>> _getPressureLog() async {
+    return await _database.query('pressure_log');
+  }
+
+
   // Build method to create the UI for the ReadingsTile
   @override
   Widget build(BuildContext context) {
+    
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey[200],
@@ -40,7 +123,7 @@ class ReadingsTile extends StatelessWidget {
                   ),
                   width: double.infinity,
                   padding: const EdgeInsets.all(25),
-                  child: Image.asset(reading.imagePath),
+                  child: Image.asset(widget.reading.imagePath),
                 ),
               ),
 
@@ -48,7 +131,7 @@ class ReadingsTile extends StatelessWidget {
 
               // Displaying heading text
               Text(
-                reading.heading,
+                widget.reading.heading,
                 style: GoogleFonts.roboto(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -60,7 +143,7 @@ class ReadingsTile extends StatelessWidget {
 
               // Displaying description text
               Text(
-                reading.description,
+                widget.reading.description,
                 style: GoogleFonts.roboto(
                   fontSize: 11,
                   color: Colors.blueGrey[350],
@@ -81,7 +164,7 @@ class ReadingsTile extends StatelessWidget {
                   ),
                   // StreamBuilder to display countdown time dynamically
                   StreamBuilder<Duration>(
-                    stream: reading.countdown.countdownStream,
+                    stream: widget.reading.countdown.countdownStream,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         final remainingTime = snapshot.data!;
@@ -109,13 +192,13 @@ class ReadingsTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Looping through text field controllers and creating corresponding text fields
-                  for (int index = 0; index < reading.textFieldControllers.length; index++)
+                  for (int index = 0; index < widget.reading.textFieldControllers.length; index++)
                     SizedBox(
                       width: 70,
                       height: 40,
                       child: MyTextField(
-                        hintText: reading.hintTexts[index],
-                        controller: reading.textFieldControllers[index],
+                        hintText: widget.reading.hintTexts[index],
+                        controller: widget.reading.textFieldControllers[index],
                       ),
                     ),
 
@@ -126,7 +209,13 @@ class ReadingsTile extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                       // Extract values from text fields
+            int syst = int.tryParse(widget.reading.textFieldControllers[0].text) ?? 0;
+            int dias = int.tryParse(widget.reading.textFieldControllers[1].text) ?? 0;
+            // Save pressure log to database
+            _savePressureLog(context, syst, dias);                    
+                      },
                       icon: const Icon(Icons.keyboard_double_arrow_right_rounded, color: Colors.green, size: 30),
                     ),
                   ),

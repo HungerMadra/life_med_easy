@@ -16,6 +16,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   // Selected Index To Control The Bottom Nav Bar
   int _selectedIndex = 0;
+
+
+  //To initialize the database when the app starts
+
+    @override
+  void initState() {
+    super.initState();
+  }
   
   void navigateBottomNavBar(int index) {
     setState(() {

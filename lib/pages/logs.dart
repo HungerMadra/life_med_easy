@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../components/readings_tile.dart';
 import '../models/readings.dart';
 import 'insights.dart';
