@@ -18,6 +18,19 @@ class ReadingsTile extends StatefulWidget {
 
   @override
   State<ReadingsTile> createState() => _ReadingsTileState();
+
+// Getter method to access the database instance
+  static Future<Database> getDatabase() async {
+    return await openDatabase(
+      join(await getDatabasesPath(), 'pressure_log_database.db'),
+      version: 1,
+      onCreate: (db, version) {
+        return db.execute(
+          'CREATE TABLE pressure_log(id INTEGER PRIMARY KEY, syst INTEGER, dias INTEGER)',
+        );
+      },
+    );
+  }
 }
 
 class _ReadingsTileState extends State<ReadingsTile> {
@@ -88,6 +101,8 @@ Future<void> _savePressureLog(BuildContext context, int syst, int dias) async {
   for (var controller in widget.reading.textFieldControllers) {
     controller.clear();
   }
+
+  //
 
   // Print current pressure log to debug console
   print(await _getPressureLog());
