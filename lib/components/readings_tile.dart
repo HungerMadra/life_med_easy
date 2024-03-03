@@ -63,13 +63,21 @@ Future<void> _savePressureLog(BuildContext context, int syst, int dias) async {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: const Text('Blood Pressure Saved'),
+        title: Text('Blood Pressure Saved',
+          style: GoogleFonts.roboto(
+                  fontSize: 16,
+                  color: Colors.blueGrey[350],
+                ),),
         actions: <Widget>[
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: const Text('OK'),
+            child: Text('OK',
+          style: GoogleFonts.roboto(
+                  fontSize: 16,
+                  color: Colors.blueGrey[350],
+                ),),
           ),
         ],
       );
@@ -85,14 +93,10 @@ Future<void> _savePressureLog(BuildContext context, int syst, int dias) async {
   print(await _getPressureLog());
 }
 
-
-
-
       // Function to handle reading pressure log from the database
   Future<List<Map<String, dynamic>>> _getPressureLog() async {
     return await _database.query('pressure_log');
   }
-
 
   // Build method to create the UI for the ReadingsTile
   @override
