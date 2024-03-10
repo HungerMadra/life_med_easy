@@ -21,26 +21,25 @@ class _LogsTileState extends State<LogsTile> {
 //    _fetchSugarLog();
   }
 
-  Future<void> _fetchPressureLog() async {
-    final database = await ReadingsTile.getDatabase();
-    _pressureLog = await database.query('pressure_log');
-    setState(() {
-      _isLoading = false;
-    });
-  }
+Future<void> _fetchPressureLog() async {
+  final database = await ReadingsTile.getDatabase();
+  _pressureLog = await database.query('pressure_log', orderBy: 'id DESC', limit: 14); // Fetch most recent 14 readings in descending order of ID
+  setState(() {
+    _isLoading = false;
+  });
+}
 
 //Uncoment the below code to fetch sugar log
 
-  // Future<void> _fetchSugarLog() async {
-  //   final database = await ReadingsTile.getDatabase();
-  //   //TODO: Replace 'pressure_log' with 'sugar_log'
-  //   _sugarLog = await database.query('pressure_log');
-  //   setState(() {
-  //     _isLoading = false;
-  //   });
-  // }
+// Future<void> _fetchSugarLog() async {
+//   final database = await ReadingsTile.getDatabase();
+//   _sugarLog = await database.query('sugar_log', orderBy: 'id DESC', limit: 14); // Fetch most recent 14 readings in descending order of ID
+//   setState(() {
+//     _isLoading = false;
+//   });
+// }
 
-  @override
+ @override
   Widget build(BuildContext context) {
     return _isLoading
         ? const Center(child: CircularProgressIndicator())
@@ -63,27 +62,54 @@ class _LogsTileState extends State<LogsTile> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   width: double.infinity,
-                  padding: const EdgeInsets.all(25),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Blood Pressure Log',
-                        style: GoogleFonts.roboto(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      for (var entry in _pressureLog)
-                        Text(
-                          'Syst: ${entry['syst']}, Dias: ${entry['dias']}',
-                          style: GoogleFonts.roboto(
-                            fontSize: 12,
-                            color: Colors.blueGrey[350],
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Center(
+                            child: Text(
+                              'Blood Pressure Log',
+                              style: GoogleFonts.roboto(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
                           ),
                         ),
-                    ],
+                        
+                        for (int i = 0; i < _pressureLog.length; i++)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '${i + 1}.',
+                                style: GoogleFonts.roboto(
+                                  fontSize: 12,
+                                  color: Colors.blueGrey[350],
+                                ),
+                              ),
+                              Text(
+                                'Syst: ${_pressureLog[i]['syst']}',
+                                style: GoogleFonts.roboto(
+                                  fontSize: 12,
+                                  color: Colors.blueGrey[350],
+                                ),
+                              ),
+                              Text(
+                                'Dias: ${_pressureLog[i]['dias']}',
+                                style: GoogleFonts.roboto(
+                                  fontSize: 12,
+                                  color: Colors.blueGrey[350],
+                                ),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
                   ),
                 ),
                 // Displaying sugar log data
