@@ -11,7 +11,7 @@ class LogsTile extends StatefulWidget {
 
 class _LogsTileState extends State<LogsTile> {
   late List<Map<String, dynamic>> _pressureLog = [];
-  late List<Map<String, dynamic>> _sugarLog = [];
+  late final List<Map<String, dynamic>> _sugarLog = [];
   bool _isLoading = true;
 
   @override
@@ -57,26 +57,34 @@ class _LogsTileState extends State<LogsTile> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 // Displaying pressure log data
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Blood Pressure Log',
-                      style: GoogleFonts.roboto(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    for (var entry in _pressureLog)
+                Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceVariant,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(25),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Text(
-                        'Syst: ${entry['syst']}, Dias: ${entry['dias']}',
+                        'Blood Pressure Log',
                         style: GoogleFonts.roboto(
-                          fontSize: 12,
-                          color: Colors.blueGrey[350],
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
                       ),
-                  ],
+                      for (var entry in _pressureLog)
+                        Text(
+                          'Syst: ${entry['syst']}, Dias: ${entry['dias']}',
+                          style: GoogleFonts.roboto(
+                            fontSize: 12,
+                            color: Colors.blueGrey[350],
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
                 // Displaying sugar log data
                 Column(
