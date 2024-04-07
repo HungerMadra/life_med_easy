@@ -228,15 +228,22 @@ Future<void> _savePressureLog(BuildContext context, int syst, int dias) async {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: IconButton(
-                      onPressed: () {
-                       // Extract values from text fields
-            int syst = int.tryParse(widget.reading.textFieldControllers[0].text) ?? 0;
-            int dias = int.tryParse(widget.reading.textFieldControllers[1].text) ?? 0;
-            // Save pressure log to database
-            _savePressureLog(context, syst, dias);                    
-                      },
-                      icon: const Icon(Icons.keyboard_double_arrow_right_rounded, color: Colors.green, size: 30),
-                    ),
+        onPressed: () {
+          // Check index and execute corresponding action
+          if (widget.reading.heading == 'Blood Pressure') {
+          // Extract values from text fields
+          int syst = int.tryParse(widget.reading.textFieldControllers[0].text) ?? 0;
+          int dias = int.tryParse(widget.reading.textFieldControllers[1].text) ?? 0;
+            // Action for the first submit button
+            _savePressureLog(context, syst, dias);
+          } else if (widget.reading.heading == 'Blood Sugar') {
+	  int a1c = int.tryParse(widget.reading.textFieldControllers[0].text) ?? 0;
+            // Action for the second submit button
+            print('Blood sugar saved$a1c');
+          }
+        },
+        icon: const Icon(Icons.keyboard_double_arrow_right_rounded, color: Colors.green, size: 30),
+      ),
                   ),
                 ],
               ),
