@@ -11,14 +11,14 @@ class LogsTile extends StatefulWidget {
 
 class _LogsTileState extends State<LogsTile> {
   late List<Map<String, dynamic>> _pressureLog = [];
-  late final List<Map<String, dynamic>> _sugarLog = [];
+  late List<Map<String, dynamic>> _sugarLog = [];
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _fetchPressureLog();
-//    _fetchSugarLog();
+    _fetchSugarLog();
   }
 
 Future<void> _fetchPressureLog() async {
@@ -29,15 +29,14 @@ Future<void> _fetchPressureLog() async {
   });
 }
 
-//Uncoment the below code to fetch sugar log
 
-// Future<void> _fetchSugarLog() async {
-//   final database = await ReadingsTile.getDatabase();
-//   _sugarLog = await database.query('sugar_log', orderBy: 'id DESC', limit: 14); // Fetch most recent 14 readings in descending order of ID
-//   setState(() {
-//     _isLoading = false;
-//   });
-// }
+Future<void> _fetchSugarLog() async {
+  final database = await ReadingsTile.getDatabase();
+  _sugarLog = await database.query('sugar_log', orderBy: 'id DESC', limit: 14); // Fetch most recent 14 readings in descending order of ID
+  setState(() {
+    _isLoading = false;
+  });
+}
 
  @override
   Widget build(BuildContext context) {
@@ -126,7 +125,7 @@ Future<void> _fetchPressureLog() async {
                     ),
                     for (var entry in _sugarLog)
                       Text(
-                        'Sugar: ${entry['sugar']}',
+                        'Sugar: ${entry['a1c']}',
                         style: GoogleFonts.roboto(
                           fontSize: 12,
                           color: Colors.blueGrey[350],
